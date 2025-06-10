@@ -12,6 +12,17 @@ class TasksController extends Controller
      */
     public function index()
     {
+        // if (\Auth::check()) {
+        // $user = \Auth::user();
+        // $tasks = $user->feed_tasks()->orderBy('created_at', 'desc')->paginate(10);
+
+        // return view('tasks.index', [
+        //     'user' => $user,
+        //     'tasks' => $tasks,
+        // ]);
+        // } else {
+        //     return view('tasks.index');
+        // }
         $tasks = Task::all();
 
         return view('tasks.index', [
@@ -41,9 +52,12 @@ class TasksController extends Controller
             'content' => 'required|max:255',
         ]);
 
+        $user = \Auth::user();
+
         $task = new Task;
         $task->content = $request->content;
         $task->status = $request->status;
+        $task->user_id = $user->id;
         $task->save();
 
         return redirect('/');
@@ -55,10 +69,17 @@ class TasksController extends Controller
     public function show(string $id)
     {
         $task = Task::findOrFail($id);
+        $user = \Auth::user();
 
-        return view('tasks.show', [
-            'task' => $task,
-        ]);
+        if ($user->id !== $task->user_id) {
+            return redirect('/');
+        }else{
+            return view('tasks.show', [
+                'task' => $task,
+            ]);
+        }
+
+
     }
 
     /**
