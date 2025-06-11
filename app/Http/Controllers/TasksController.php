@@ -12,22 +12,22 @@ class TasksController extends Controller
      */
     public function index()
     {
-        // if (\Auth::check()) {
-        // $user = \Auth::user();
-        // $tasks = $user->feed_tasks()->orderBy('created_at', 'desc')->paginate(10);
-
-        // return view('tasks.index', [
-        //     'user' => $user,
-        //     'tasks' => $tasks,
-        // ]);
-        // } else {
-        //     return view('tasks.index');
-        // }
-        $tasks = Task::all();
+        if (\Auth::check()) {
+        $user = \Auth::user();
+        $tasks = $user->feed_tasks()->orderBy('created_at', 'desc')->paginate(10);
 
         return view('tasks.index', [
+            'user' => $user,
             'tasks' => $tasks,
         ]);
+        } else {
+            return view('tasks.index');
+        }
+        // $tasks = Task::all();
+
+        // return view('tasks.index', [
+        //     'tasks' => $tasks,
+        // ]);
     }
 
     /**
